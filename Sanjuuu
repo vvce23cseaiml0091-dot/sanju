@@ -1,0 +1,196 @@
+Experiment No: 5
+
+Create a Docker image for an application stored in local repository and run the application using Docker image.
+
+Step 1:
+Create a folder named “dockerimage” inside another folder named “Devops”.
+
+Step 2:
+Open the dockerimage folder in VS Code and create two new files:
+sample.py
+Dockerfile
+Content of sample.py:
+Python
+print("Hello World")
+
+Step 3:
+Write the following content inside the Dockerfile:
+Dockerfile
+FROM python
+
+WORKDIR /app
+
+COPY . /app
+
+CMD ["python", "sample.py"]
+
+Step 4:
+Open the terminal in VS Code inside the dockerimage directory and execute the following commands:
+Run the Python file:
+Bash
+py sample.py
+Build the Docker image:
+Bash
+docker build -t test.1 .
+Here, test.1 is the image name.
+Run the Docker container:
+Bash
+docker run --name cont1 test.1
+Here, cont1 is the container name.
+
+Step 5:
+Open the Docker Desktop application and check whether the new image repository test.1 is added successfully or not.
+You can also verify the running container named cont1 under the containers section.
+Output:
+Plain text
+Hello World
+This output is displayed after running:
+Bash
+docker run --name cont1 test.1
+
+Step 6:
+Copy the image tag by clicking on test.1 and copying the image tag shown in Docker Desktop.
+Example:
+Plain text
+test.1:latest
+
+Step 7:
+Push the container image to a remote repository in Docker Hub using the following commands:
+Tag the image:
+Bash
+docker image tag <copied_image_tag> <username>/test.1
+Push the image to Docker Hub:
+Bash
+docker push <username>/test.1:latest
+
+Step 8:
+Check whether the container image is successfully pushed to Docker Hub by:
+Opening Docker Desktop
+Going to Docker Hub
+Searching for:
+Plain text
+<username>/test.1
+
+If the image appears in Docker Hub, then the push operation is successful.
+
+
+
+
+
+Experiment No: 6
+
+Create Docker Image using GitHub Repository and Build using Jenkins Pipeline
+
+Step 1:
+Go to GitHub and create a new repository with the name “dockerprog”.
+Copy the repository URL and clone it using Git Bash with the following command:
+Bash
+git clone <your_repo_url>
+
+Step 2:
+Open the dockerprog folder in VS Code and create two new files:
+Dockerfile
+sample.py
+Content of sample.py:
+Python
+print("Hello World")
+Content of Dockerfile:
+Dockerfile
+FROM python
+
+WORKDIR /app
+
+COPY . /app
+
+CMD ["python", "sample.py"]
+
+Step 3:
+Commit and push the changes to the GitHub repository using the following commands:
+Bash
+git add .
+git commit -m "Docker project files added"
+git push
+
+Step 4:
+Create a new Docker image and container by running the following commands in Git Bash.
+Build the Docker image:
+Bash
+docker build -t test.2 .
+Here, test.2 is the image name.
+Run the container:
+Bash
+docker run --name cont2 test.2
+Here, cont2 is the container name.
+List all Docker images available in the local device:
+Bash
+docker images
+Copy the IMAGE ID shown in the output and tag the image:
+Bash
+docker tag <image_id> <username>/test.2
+Push the image to Docker Hub:
+Bash
+docker push <username>/test.2:latest
+
+Step 5:
+Open Jenkins and click on:
+Settings
+Plugins
+
+Step 6:
+Update all installed plugins.
+Make sure the following plugins are installed:
+CloudBees Docker Custom Build Environment
+Docker
+Docker Pipeline
+Docker Compose Build Step
+
+Step 7:
+Create a new item in Jenkins with the name “Doc2” and select Pipeline as the item type.
+
+Step 8:
+Add the following pipeline script:
+Groovy
+pipeline
+{
+    agent any
+
+    environment
+    {
+        dockerImage = 'ayusht05/test.2'
+        registry = 'ayusht05/test.2'
+        registryCredential = 'jenkin_docker_token'
+    }
+
+    stages
+    {
+        stage('Checkout')
+        {
+            steps
+            {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    extensions: [],
+                    userRemoteConfigs: [[url: 'https://github.com/<username>/dockerprog.git']]
+                )
+            }
+        }
+
+        stage('Build Docker Image')
+        {
+            steps
+            {
+                script
+                {
+                    dockerImage = docker.build(registry)
+                }
+            }
+        }
+    }
+}
+
+Step 9:
+Click on Save and then click the Build Now button on the left sidebar.
+If the build is successful, Jenkins will display the build status with a success symbol.
+
+
+
