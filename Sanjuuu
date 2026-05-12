@@ -194,3 +194,60 @@ If the build is successful, Jenkins will display the build status with a success
 
 
 
+
+Part 1: Slack Setup and Plugin Installation
+​According to 1000199146.jpg, follow these initial steps:
+
+​Slack Workspace Setup:
+​Go to your browser and type "slack".
+​Sign in with your "email ID".
+​In the workplace, click on "vuce join".
+​Type "your name" to open the website.
+​(Optional) Go to your browser and type "install slack on windows".
+​
+Channel Creation:
+​Go to channels \rightarrow create channel \rightarrow #devops-team2.
+​Select "public" so anyone in "vuce" can join/create.
+​Jenkins Plugin Installation:
+​Go to Jenkins \rightarrow Manage Jenkins \rightarrow Plugins \rightarrow Available plugins.
+​Search for "Slack Notification".
+​Select and install, then restart Jenkins.
+
+​Part 2: Global Configuration and Credentials
+​As detailed in 1000199146.jpg:
+
+​Workspace Configuration:
+​Go to Manage Jenkins \rightarrow System (Configure global settings and path).
+​Go down to the "workspace" section.
+​Go back to Slack, copy the name, and paste it into the workspace field in Jenkins.
+
+​Adding Credentials:
+​In Jenkins, go to Credentials \rightarrow Add \rightarrow Global \rightarrow Secret text.
+​In your browser, navigate to: [https://my.slack.com/services/new/jenkins-ci](https://my.slack.com/services/new/jenkins-ci).
+​Select the channel #devops-team2 and click "Add Jenkins CI integration".
+​Scroll down to Step 3 and copy the Integration Token.
+​Back in Jenkins, paste the token into the "Secret" field.
+​In the "ID" field, write "Jenkins".
+​Add a description (e.g., "notify") and click Create.
+​In the credential settings, ensure it is set to "null" to notify.
+
+​Part 3: Job Configuration and Execution
+​Following the notes in 1000199147.jpg:
+
+​Default Channel Setting:
+​Set the default channel to #devops-team2.
+​Click Apply and Save.
+​Creating a New Build Item:
+​Select New Item, give it a name, and choose Freestyle project.
+​Click OK.
+​Under Build Step, add an "Execute shell" (or equivalent) command: java --version.
+​
+Post-build Actions:
+​Go to Post-build Actions \rightarrow Add \rightarrow Slack Notifications.
+​Check the boxes for:
+​Notify Build Start
+​Notify Success
+​Notify Every Failure
+​Click Apply and Save.
+​Final Step:
+​Click Build Now.
